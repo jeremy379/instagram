@@ -62,7 +62,7 @@ class Instagram
      *
      * @return array
      */
-    public function get(string $user): array
+    public function get($user)
     {
         $uri = sprintf('https://www.instagram.com/%s/media/', $user);
 
