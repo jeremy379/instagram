@@ -53,9 +53,9 @@ class Instagram
      *
      * @return void
      */
-    public function __construct(string $accessToken, HttpClient $httpClient = null, RequestFactory $requestFactory = null)
+    public function __construct($accessToken, HttpClient $httpClient = null, RequestFactory $requestFactory = null)
     {
-        $this->accessToken = $accesToken;
+        $this->accessToken = $accessToken;
         $this->httpClient = $httpClient ?: HttpClientDiscovery::find();
         $this->requestFactory = $requestFactory ?: MessageFactoryDiscovery::find();
     }
