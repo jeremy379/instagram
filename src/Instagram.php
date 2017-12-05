@@ -71,7 +71,7 @@ class Instagram
     {
         $uri = sprintf('https://api.instagram.com/v1/users/self/media/recent?access_token=%s', $this->accessToken);
 
-        $this->sendGetRequest($uri);
+        $this->sendGetRequest($uri)->data;
     }
 
     public function getAnonymousPageData($pageName) {
@@ -90,6 +90,6 @@ class Instagram
             throw new InstagramException($body->meta->error_message);
         }
 
-        return json_decode((string) $response->getBody())->data;
+        return json_decode((string) $response->getBody());
     }
 }
