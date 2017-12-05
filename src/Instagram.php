@@ -25,6 +25,11 @@ use Http\Message\RequestFactory;
  */
 class Instagram
 {
+    /** 
+    * Access token
+    **/
+    protected $accessToken;
+    
     /**
      * The http client.
      *
@@ -42,13 +47,15 @@ class Instagram
     /**
      * Create a new instagram instance.
      *
+     * @param string $accessToken
      * @param \Http\Client\HttpClient|null $httpClient
      * @param \Http\Message\RequestFactory|null $requestFactory
      *
      * @return void
      */
-    public function __construct(HttpClient $httpClient = null, RequestFactory $requestFactory = null)
+    public function __construct(string $accessToken, HttpClient $httpClient = null, RequestFactory $requestFactory = null)
     {
+        $this->accessToken = $accesToken;
         $this->httpClient = $httpClient ?: HttpClientDiscovery::find();
         $this->requestFactory = $requestFactory ?: MessageFactoryDiscovery::find();
     }
@@ -56,24 +63,23 @@ class Instagram
     /**
      * Fetch the media items.
      *
-     * @param string $user
-     *
      * @throws \Vinkla\Instagram\InstagramException
      *
      * @return array
      */
-    public function get($user)
+    public function get()
     {
-        $uri = sprintf('https://www.instagram.com/%s/media/', $user);
+        $uri = sprintf('https://api.instagram.com/v1/users/self/media/recent?access_token=%s', $this->accessToken);
 
         $request = $this->requestFactory->createRequest('GET', $uri);
 
         $response = $this->httpClient->sendRequest($request);
 
         if ($response->getStatusCode() === 404) {
-            throw new InstagramException(sprintf('The user [%s] wasn\'t found.', $user));
+            $body = json_decode((string) $response->getBody());
+            throw new InstagramException($body->meta->error_message);
         }
 
-        return json_decode((string) $response->getBody())->items;
+        return json_decode((string) $response->getBody())->data;
     }
 }
