@@ -71,8 +71,18 @@ class Instagram
     {
         $uri = sprintf('https://api.instagram.com/v1/users/self/media/recent?access_token=%s', $this->accessToken);
 
-        $request = $this->requestFactory->createRequest('GET', $uri);
+        $this->sendGetRequest($uri);
+    }
 
+    public function getAnonymousPageData($pageName) {
+
+        $uri = sprintf('https://www.instagram.com/%s/?__a=1', $pageName);
+
+        return $this->sendGetRequest($uri);
+    }
+
+    public function sendGetRequest($uri) {
+        $request = $this->requestFactory->createRequest('GET', $uri);
         $response = $this->httpClient->sendRequest($request);
 
         if ($response->getStatusCode() === 404) {
